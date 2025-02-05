@@ -6,6 +6,7 @@ void DFA::AddTransition(int src, int dst, char sym)
 	if (Dtran[src].find(sym) != Dtran[src].end())
 	{
 		cout << "DFA has multiple transitions of the same symbol: '" << sym  << "' from state " << src << endl;
+
 		return;
 	}   
 	 Dtran[src][sym] = dst; 
