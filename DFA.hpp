@@ -10,7 +10,7 @@ public:
 	DFA(set<char> A, int I, set<int> F) : alphabet(A), init_state(I), fin_states(F) {}
 	void AddTransition(int src, int dst, char sym);
 	bool isAccepted(string& input); //checks if the input string is accepted by the NFA
-	bool isValidDFA(const set<int>& states);
+	bool isValidDFA();
 	void Print();
 
 private:

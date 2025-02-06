@@ -3,6 +3,7 @@
 #include <map>
 #include<stack>
 #include <iostream>
+#include "DFA.hpp"
 using namespace std;
 class NFA
 {
@@ -14,6 +15,7 @@ public:
 	set<int> EpsilonClosure(const set<int>& states);
 	bool isAccepted(string& input); //checks if the input string is accepted by the NFA
 	void Print();
+	DFA NFA2DFA();
 	
 
 private:

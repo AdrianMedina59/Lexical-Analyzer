@@ -27,6 +27,7 @@ void test::DFA_Test()
 	set<char> alphabet = { 'a','b' };
 	int inital_state = 0;
 	set<int> final_states = { 3 };
+	string test = "aaabbbbabb";
 
 	DFA dfa(alphabet, inital_state, final_states);
 	dfa.AddTransition(0, 1 , 'a');
@@ -42,5 +43,7 @@ void test::DFA_Test()
 	dfa.AddTransition(3,  3 , 'b');
 	dfa.AddTransition(3,  2 , 'a');
 
-	dfa.isValidDFA({ 0 });
+	dfa.Print();
+	
+	cout << "Is " << test << " accepted in this DFA?" << (dfa.isAccepted(test) ? " Yes" : " No") << endl;
 }

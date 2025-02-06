@@ -14,14 +14,36 @@ void DFA::AddTransition(int src, int dst, char sym)
 
 bool DFA::isAccepted(string& input)
 {
+
+	//first checking if the DFA is valid
+	if (!isValidDFA())
+	{
+		cout << "This DFA is not valid!" << endl;
+		return false;
+	}
 	
-	//also need to check if there is no duplicate transitions for each state because DFA's only accept 1 transition per symbol of the alphabet
-	
-	
-	return false;
+	int currentState = init_state;
+	for (char symbol : input)
+	{
+		if (Dtran.find(currentState) == Dtran.end() || Dtran[currentState].find(symbol) == Dtran[currentState].end())
+		{
+
+			return false;
+		}
+		currentState = Dtran[currentState][symbol];
+		
+	}
+	if (fin_states.find(currentState) != fin_states.end())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
-bool DFA::isValidDFA(const set<int>& states)
+bool DFA::isValidDFA()
 {
 	//need to check all the transitions at each state to check if each state has a transition for each symbol of the alphabet
 	for (const auto& stateTransitions : Dtran)
@@ -51,10 +73,37 @@ bool DFA::isValidDFA(const set<int>& states)
 			return false;
 		}
 	}
-	cout << "this is a valid DFA!";
+	
 	return true;
 }
 
 void DFA::Print()
 {
+	cout << "Alphabet: ";
+	for (char sym : alphabet)
+	{
+		cout << sym << " ";
+	}
+	cout << endl;
+
+	cout << "Initial State: " << init_state << endl;
+
+	cout << "Final States: ";
+	for (int state : fin_states)
+	{
+		cout << state << " ";
+	}
+	cout << endl;
+
+	cout << "Transitions:" << endl;
+	for (const auto& stateTransitions : Dtran)
+	{
+		int src = stateTransitions.first;
+		for (const auto& transition : stateTransitions.second)
+		{
+			char sym = transition.first;
+			int dst = transition.second;
+			cout << src << " --" << sym << "--> " << dst << endl;
+		}
+	}
 }

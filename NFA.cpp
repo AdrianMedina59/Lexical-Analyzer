@@ -100,4 +100,9 @@ void NFA::Print()
 	}
 }
 
+DFA NFA::NFA2DFA()
+{
+	return DFA();
+}
+
 
