@@ -77,6 +77,13 @@ bool DFA::isValidDFA()
 	return true;
 }
 
+void DFA::setFinalStates(set<int> finalStates)
+{
+	this->fin_states = finalStates;
+}
+
+
+
 void DFA::Print()
 {
 	cout << "Alphabet: ";

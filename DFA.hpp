@@ -11,6 +11,7 @@ public:
 	void AddTransition(int src, int dst, char sym);
 	bool isAccepted(string& input); //checks if the input string is accepted by the NFA
 	bool isValidDFA();
+	void setFinalStates(set<int> finalStates);
 	void Print();
 
 private:

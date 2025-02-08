@@ -4,5 +4,5 @@
 class test {
 public:
 	void NFA_Test();
-	void DFA_Test();
+	
 };

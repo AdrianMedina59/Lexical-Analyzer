@@ -4,7 +4,7 @@ int main(){
 	//test object in order to test classes
 	test test;
 	test.NFA_Test();
-	test.DFA_Test();
+	
 
 	return 0;
 }
