@@ -132,6 +132,8 @@
     <ClCompile Include="DFA.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NFA.cpp" />
+    <ClCompile Include="shunting.cpp" />
+    <ClCompile Include="shunting.hpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
   <ItemGroup>

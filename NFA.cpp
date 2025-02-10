@@ -8,6 +8,36 @@ using namespace std;
 
 
 
+NFA::NFA()
+{
+}
+
+void NFA::AddEpsilonTransition(int src, int dst)
+{
+	Ntran[src]['_'].insert(dst);
+}
+
+//Merge transitions from another NFA 
+void NFA::MergeTransitions(const NFA& other)
+{
+	for (const auto& state : other.Ntran)
+	{
+		int stateID = state.first;
+		const auto& symbolMap = state.second;
+
+		for (const auto& symbolTransition : symbolMap)
+		{
+			char symbol = symbolTransition.first;
+			const auto& destinationStates = symbolTransition.second;
+
+			//Merge each destination set
+			Ntran[stateID][symbol].insert(destinationStates.begin(), destinationStates.end());
+		}
+	}
+	//Merging final states
+	fin_states.insert(other.fin_states.begin(), other.fin_states.end());
+}
+
 //epsilon closure of the set of states in the NFA
 //a DFS traversal of epsilon transition
 set<int> NFA::EpsilonClosure(const set<int>& states)
@@ -82,9 +112,85 @@ bool NFA::isAccepted(string& input)
 	return false;
 }
 
+NFA NFA::Concatenation(NFA nfa1, NFA nfa2)
+{
+	NFA result = nfa1;
+	result.MergeTransitions(nfa2);
+
+	for (int state : nfa1.fin_states)
+	{
+		result.AddEpsilonTransition(state, nfa2.init_state);
+	}
+	result.fin_states = nfa2.fin_states;
+
+	return result;
+}
+
+//Union of two NFAs
+NFA NFA::Union(NFA nfa1, NFA nfa2)
+{
+	NFA result;
+	int newInitState = 0;  //making inital state 0
+
+	//setting the result NFA's inital state to 0
+	result.init_state = newInitState;
+	
+	//Adding epsilon transitions from result NFA start state to the start states of both NFAs
+	result.AddEpsilonTransition(newInitState, nfa1.init_state);
+	result.AddEpsilonTransition(newInitState, nfa2.init_state);
+
+	//merging transitions
+	result.MergeTransitions(nfa1);
+	result.MergeTransitions(nfa2);
+
+	//Setting final states of both NFAs to final states of result
+	result.fin_states.insert(nfa1.fin_states.begin(), nfa1.fin_states.end());
+	result.fin_states.insert(nfa2.fin_states.begin(), nfa2.fin_states.end());
+
+	return result;
+
+}
+
+//Kleene star of NFA
+NFA NFA::KleenStar(NFA nfa)
+{
+	NFA result = nfa;
+	int newInitState = 0;
+
+	
+	result.init_state = newInitState;
+	result.AddEpsilonTransition(newInitState, nfa.init_state);
+
+	//adding an epsilon transition from final states
+	for (int state : nfa.fin_states)
+	{
+		result.AddEpsilonTransition(state, nfa.init_state);
+	}
+
+	//New inital state is also a final state 
+	result.fin_states.insert(newInitState);
+	return result;
+}
+
 //print NFA
 void NFA::Print()
 {
+	cout << "Alphabet: ";
+	for (char sym : alphabet)
+	{
+		cout << sym << " ";
+	}
+	cout << endl;
+
+	cout << "Initial State: " << init_state << endl;
+
+	cout << "Final States: ";
+	for (int state : fin_states)
+	{
+		cout << state << " ";
+	}
+	cout << endl;
+
 	cout << "NFA Transitions: \n";
 	for (const auto& nfa_row : Ntran)
 	{
@@ -183,6 +289,73 @@ DFA NFA::NFA2DFA()
 	//setting final states
 	dfa.setFinalStates(dfaFinalStates);
 	return dfa;
+}
+
+//converting Regular expression to NFA
+ NFA NFA::RegexToNFA(const string& regex)
+{
+	stack<NFA> nfaStack;
+	NFA finalNFA;
+
+	for (size_t i = 0; i < regex.size(); ++i)
+	{
+		char symbol = regex[i];
+		
+		//if symbol is letter or digit
+		if (isalnum(symbol))
+		{
+			NFA baseNFA;
+			int startState = i * 2;
+			int endState = startState + 1;
+
+			baseNFA.init_state = startState;
+			baseNFA.fin_states.insert(endState);
+			baseNFA.Ntran[startState][symbol].insert(endState);
+			baseNFA.alphabet.insert(symbol);
+
+			nfaStack.push(baseNFA);
+		}
+		//dealing with concatination
+		else if (symbol == '.')
+		{
+			NFA nfa2 = nfaStack.top();
+			nfaStack.pop();
+			NFA nfa1 = nfaStack.top();
+			nfaStack.pop();
+			NFA concatNFA = NFA::Concatenation(nfa1, nfa2);
+
+			concatNFA.alphabet.insert(nfa1.alphabet.begin(), nfa1.alphabet.end());
+			concatNFA.alphabet.insert(nfa2.alphabet.begin(), nfa2.alphabet.end());
+
+			nfaStack.push(concatNFA);
+		}
+		//dealing with Union
+		else if (symbol == '|')
+		{
+			NFA nfa2 = nfaStack.top();
+			nfaStack.pop();
+			NFA nfa1 = nfaStack.top();
+			nfaStack.pop();
+			NFA unionNFA = NFA::Union(nfa1, nfa2);
+
+			unionNFA.alphabet.insert(nfa1.alphabet.begin(), nfa1.alphabet.end());
+			unionNFA.alphabet.insert(nfa2.alphabet.begin(), nfa2.alphabet.end());
+
+			nfaStack.push(unionNFA);
+		}
+		//dealing with star
+		else if (symbol == '*')
+		{
+			NFA nfa = nfaStack.top();
+			nfaStack.pop();
+			NFA starNFA = NFA::KleenStar(nfa);
+
+			starNFA.alphabet.insert(nfa.alphabet.begin(), nfa.alphabet.end());
+			nfaStack.push(starNFA);
+		}
+	}
+	finalNFA = nfaStack.top();
+	return finalNFA;
 }
 
 

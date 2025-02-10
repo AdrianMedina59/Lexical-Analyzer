@@ -27,6 +27,12 @@
     <ClCompile Include="DFA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="shunting.hpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="shunting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NFA.hpp">
