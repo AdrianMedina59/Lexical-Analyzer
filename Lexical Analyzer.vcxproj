@@ -130,6 +130,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DFA.cpp" />
+    <ClCompile Include="lexer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NFA.cpp" />
     <ClCompile Include="shunting.cpp" />
@@ -138,6 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DFA.hpp" />
+    <ClInclude Include="lexer.hpp" />
     <ClInclude Include="NFA.hpp" />
     <ClInclude Include="test.hpp" />
   </ItemGroup>
