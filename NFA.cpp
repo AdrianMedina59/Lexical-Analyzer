@@ -1,4 +1,4 @@
-#include <set>
+﻿#include <set>
 #include <map>
 #include<stack>
 #include <queue>
@@ -7,9 +7,10 @@
 using namespace std;
 
 
-
+int NFA::stateCounter = 0;
 NFA::NFA()
 {
+	init_state = -1;
 }
 
 void NFA::AddEpsilonTransition(int src, int dst)
@@ -112,16 +113,21 @@ bool NFA::isAccepted(string& input)
 	return false;
 }
 
-NFA NFA::Concatenation(NFA nfa1, NFA nfa2)
-{
+NFA NFA::Concatenation(NFA nfa1, NFA nfa2) {
+
 	NFA result = nfa1;
+
+	// Merge transitions directly
 	result.MergeTransitions(nfa2);
 
-	for (int state : nfa1.fin_states)
-	{
+	// Add ε-transitions from final states of nfa1 to the start state of nfa2
+	for (int state : nfa1.fin_states) {
 		result.AddEpsilonTransition(state, nfa2.init_state);
 	}
-	result.fin_states = nfa2.fin_states;
+
+	// Update final states to nfa2's final states
+	result.fin_states.clear();
+	result.fin_states.insert(nfa2.fin_states.begin(), nfa2.fin_states.end());
 
 	return result;
 }
@@ -130,22 +136,24 @@ NFA NFA::Concatenation(NFA nfa1, NFA nfa2)
 NFA NFA::Union(NFA nfa1, NFA nfa2)
 {
 	NFA result;
-	int newInitState = 0;  //making inital state 0
+	int newStart = stateCounter++;
+	int newFinal = stateCounter++;
 
-	//setting the result NFA's inital state to 0
-	result.init_state = newInitState;
-	
-	//Adding epsilon transitions from result NFA start state to the start states of both NFAs
-	result.AddEpsilonTransition(newInitState, nfa1.init_state);
-	result.AddEpsilonTransition(newInitState, nfa2.init_state);
+	result.init_state = newStart;
+	result.fin_states.insert(newFinal);
 
-	//merging transitions
 	result.MergeTransitions(nfa1);
 	result.MergeTransitions(nfa2);
 
-	//Setting final states of both NFAs to final states of result
-	result.fin_states.insert(nfa1.fin_states.begin(), nfa1.fin_states.end());
-	result.fin_states.insert(nfa2.fin_states.begin(), nfa2.fin_states.end());
+	result.AddEpsilonTransition(newStart, nfa1.init_state);
+	result.AddEpsilonTransition(newStart, nfa2.init_state);
+
+	for (int state : nfa1.fin_states) {
+		result.AddEpsilonTransition(state, newFinal);
+	}
+	for (int state : nfa2.fin_states) {
+		result.AddEpsilonTransition(state, newFinal);
+	}
 
 	return result;
 
@@ -154,22 +162,24 @@ NFA NFA::Union(NFA nfa1, NFA nfa2)
 //Kleene star of NFA
 NFA NFA::KleenStar(NFA nfa)
 {
-	NFA result = nfa;
-	int newInitState = 0;
+	NFA result;;
+	int newStart = stateCounter++;
+	int newFinal = stateCounter++;
 
-	
-	result.init_state = newInitState;
-	result.AddEpsilonTransition(newInitState, nfa.init_state);
+	result.init_state = newStart;
+	result.fin_states.insert(newFinal);
 
-	//adding an epsilon transition from final states
-	for (int state : nfa.fin_states)
-	{
+	result.MergeTransitions(nfa);
+	result.AddEpsilonTransition(newStart, newFinal);
+	result.AddEpsilonTransition(newStart, nfa.init_state);
+
+	for (int state : nfa.fin_states) {
+		result.AddEpsilonTransition(state, newFinal);
 		result.AddEpsilonTransition(state, nfa.init_state);
 	}
 
-	//New inital state is also a final state 
-	result.fin_states.insert(newInitState);
 	return result;
+	
 }
 
 //print NFA
@@ -205,6 +215,33 @@ void NFA::Print()
 		}
 		cout << endl;
 	}
+}
+
+set<int> NFA::GetAllStates()
+{
+	set<int> states;
+	
+	for (const auto& entry : Ntran) {
+		int state = entry.first;
+		states.insert(state);
+	}
+
+	
+	for (const auto& entry : Ntran) {
+		const auto& symbolMap = entry.second;
+		for (const auto& symbolEntry : symbolMap) {
+			const auto& destStates = symbolEntry.second;
+			states.insert(destStates.begin(), destStates.end());
+		}
+	}
+
+
+	
+	states.insert(init_state);
+	states.insert(fin_states.begin(), fin_states.end());
+
+	return states;
+
 }
 
 DFA NFA::NFA2DFA()
@@ -291,22 +328,36 @@ DFA NFA::NFA2DFA()
 	return dfa;
 }
 
+
+
+int NFA::GetMaxState()
+{
+	if (Ntran.empty()) return -1;
+
+	int maxState = 0;
+	for (const auto& transition : Ntran) {
+		maxState = std::max(maxState, transition.first);
+		for (const auto& symbolMap : transition.second) {
+			for (int dest : symbolMap.second) {
+				maxState = std::max(maxState, dest);
+			}
+		}
+	}
+	return maxState;
+}
+
 //converting Regular expression to NFA
  NFA NFA::RegexToNFA(const string& regex)
 {
 	stack<NFA> nfaStack;
-	NFA finalNFA;
-
-	for (size_t i = 0; i < regex.size(); ++i)
+	for (char symbol : regex)
 	{
-		char symbol = regex[i];
-		
 		//if symbol is letter or digit
 		if (isalnum(symbol))
 		{
 			NFA baseNFA;
-			int startState = i * 2;
-			int endState = startState + 1;
+			int startState = stateCounter++;
+			int endState = stateCounter++;
 
 			baseNFA.init_state = startState;
 			baseNFA.fin_states.insert(endState);
@@ -354,8 +405,7 @@ DFA NFA::NFA2DFA()
 			nfaStack.push(starNFA);
 		}
 	}
-	finalNFA = nfaStack.top();
-	return finalNFA;
+	return nfaStack.top();
 }
 
 

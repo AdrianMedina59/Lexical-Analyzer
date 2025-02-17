@@ -25,6 +25,7 @@ void test::NFA_Test()
 	nfa.isAccepted(stringTest);
 
 	cout << "Is " << stringTest << " accepted in this DFA?" << (dfa.isAccepted(stringTest) ? " Yes" : " No") << endl;
+	cout << "Is " << stringTest << " accepted in this NFA?" << (nfa.isAccepted(stringTest) ? " Yes" : " No") << endl;
 }
 
 

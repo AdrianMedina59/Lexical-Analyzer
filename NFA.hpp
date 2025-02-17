@@ -21,7 +21,10 @@ public:
 	static NFA Union(NFA nfa1, NFA nfa2);
 	static NFA KleenStar(NFA nfa);
 	void Print();
+	set<int> GetAllStates();
 	DFA NFA2DFA();
+	static int stateCounter;
+	int GetMaxState();
 	static NFA RegexToNFA(const string& regex); //converting regular expression to NFA
 	
 

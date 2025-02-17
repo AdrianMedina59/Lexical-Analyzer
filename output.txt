@@ -1,0 +1,49 @@
+input file got!
+reading token line!t1 a|b , t2 a*.a , t3 (a|b)*.c*.c #
+reading test string: a aac bbc aabc
+3
+3
+
+Lexer Token List:
+Token: t1
+Token: t2
+Token: t3
+Alphabet: a b 
+Initial State: 0
+Final States: 1 2 
+Transitions:
+0 --a--> 1
+0 --b--> 2
+1 --a--> 3
+1 --b--> 3
+2 --a--> 3
+2 --b--> 3
+3 --a--> 3
+3 --b--> 3
+Alphabet: a 
+Initial State: 0
+Final States: 1 
+Transitions:
+0 --a--> 1
+1 --a--> 1
+Alphabet: a b c 
+Initial State: 0
+Final States: 3 
+Transitions:
+0 --a--> 1
+0 --b--> 2
+0 --c--> 3
+1 --a--> 1
+1 --b--> 2
+1 --c--> 3
+2 --a--> 1
+2 --b--> 2
+2 --c--> 3
+3 --a--> 4
+3 --b--> 4
+3 --c--> 3
+4 --a--> 4
+4 --b--> 4
+4 --c--> 4
+Input String: a aac bbc aabc
+Entering getToken... 

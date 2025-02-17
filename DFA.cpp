@@ -1,6 +1,10 @@
 #include "DFA.hpp"
 #pragma once
 
+DFA::DFA()
+{
+}
+
 void DFA::AddTransition(int src, int dst, char sym)
 {
 	if (Dtran[src].find(sym) != Dtran[src].end())
@@ -41,6 +45,12 @@ bool DFA::isAccepted(string& input)
 	{
 		return false;
 	}
+}
+
+//check if a DFA accepts epsilon
+bool DFA::acceptsEpsilon()
+{
+	return fin_states.find(init_state) != fin_states.end();
 }
 
 bool DFA::isValidDFA()

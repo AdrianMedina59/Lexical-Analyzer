@@ -8,8 +8,10 @@ using namespace std;
 class DFA {
 public:
 	DFA(set<char> A, int I, set<int> F) : alphabet(A), init_state(I), fin_states(F) {}
+	DFA();
 	void AddTransition(int src, int dst, char sym);
 	bool isAccepted(string& input); //checks if the input string is accepted by the NFA
+	bool acceptsEpsilon();   //check if a DFA accepts epsilon
 	bool isValidDFA();
 	void setFinalStates(set<int> finalStates);
 	void Print();
