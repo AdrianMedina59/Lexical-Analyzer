@@ -1,0 +1,2 @@
+t0 b|c|d|e|f|g|h|i|j , t1 a|b|c|d|e|f|g|h|i|j , t2 (a|b)*.(b|c|d|e|f|g|h|i|j).(a|b) , t3 a.a.(b|c|d|e|f|g|h|i|j)*.(a|b)* , t4 (a.a.(b|c|d|e|f|g|h|i|j)*.(a|b)*)*.((a|b)*.(b|c|d|e|f|g|h|i|j).(a|b))*.a.a.a #
+"jjaabbabghibaaabababadabcdefhaaaaba"

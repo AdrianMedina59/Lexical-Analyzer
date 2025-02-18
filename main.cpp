@@ -9,10 +9,19 @@
 
 using namespace std;
 
+/*
+* AUTHOR : Adrian Medina ID:1224575755
+* 
+This is the main class file. It's main functionality is to parse the file contents
+and creates the list of tokens and list of DFA's from the token's regex. Then using a 
+lexer object to deal with logic.This class file then prints out the token followed by 
+the portion of the input string that accepts it.
+*/
 
 
 // Function to check if a string starts with 't' followed by a digit
 bool isTokenName(const string& str) {
+    //checking the the first char of the string is 't' and length is greater than 1 and is a digit at index 1
     return !str.empty() && str[0] == 't' && str.length() > 1 && isdigit(str[1]);
 }
 
@@ -135,8 +144,15 @@ void loadInputFile(istream& input)
 
     while ((token = Lexer.getToken()).name != "EOS" && acceptsEpsilon == false)
     {
-        cout << token.name << " , " << '"' << token.value <<'"' << endl;
-        lexedTokens.push_back(token);
+        if (token.name == "Error")
+        {
+            cout << "ERROR" << endl;
+            return;
+        }
+        else {
+            cout << token.name << " , " << '"' << token.value << '"' << endl;
+            lexedTokens.push_back(token);
+        }
     }
    
    

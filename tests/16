@@ -1,0 +1,2 @@
+t0 9|c|d|e|f|g|h|i|j , t1 a|9|c|d|e|f|g|h|i|j , t2 (a|9)*.(9|c|d|e|f|g|h|i|j).(a|9) , t3 a.a.(9|c|d|e|f|g|h|i|j)*.(a|9)* , t4 (a.a.(9|c|d|e|f|g|h|i|j)*.(a|9)*)*.((a|9)*.(9|c|d|e|f|g|h|i|j).(a|9))*.a.a.a #
+"jjaa99a9ghi9aaa9a9a9ada9cdefhaaaa9a"

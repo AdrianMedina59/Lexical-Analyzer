@@ -1,0 +1,2 @@
+t0 a* , t1 (b|c)* , t2 d* , t3 (e|f)* , t4 g*.h , t5 i* #
+"efg i bccd dd"
